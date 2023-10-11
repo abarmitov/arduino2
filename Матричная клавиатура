@@ -1,0 +1,41 @@
+const int numRows = 2;
+const int numCols = 2;
+
+char keyMap[numRows][numCols] = {
+  {'1', '2'},
+  {'3', '4'}
+};
+
+int rowPins[numRows] = {4, 5}; // Пины для строк
+int colPins[numCols] = {7, 8}; // Пины для столбцов
+
+void setup() {
+  Serial.begin(9600);
+  
+  for (int i = 0; i < numRows; i++) {
+    pinMode(rowPins[i], OUTPUT);
+    digitalWrite(rowPins[i], HIGH);
+  }
+  for (int i = 0; i < numCols; i++) {
+    pinMode(colPins[i], INPUT_PULLUP);
+  }
+}
+
+void loop() {
+  for (int row = 0; row < numRows; row++) {
+    digitalWrite(rowPins[row], LOW);
+
+    for (int col = 0; col < numCols; col++) {
+      if (digitalRead(colPins[col]) == LOW) {
+        Serial.println(keyMap[row][col]);
+        
+        // Ждем, пока кнопка отпущена
+        while (digitalRead(colPins[col]) == LOW) {
+          delay(500);
+        }
+      }
+    }
+
+    digitalWrite(rowPins[row], HIGH);
+  }
+}
